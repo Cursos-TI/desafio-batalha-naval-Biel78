@@ -1,0 +1,126 @@
+#include <stdio.h>
+
+// Tamanho do tabuleiro e das habilidades
+#define TAM_TABULEIRO 10
+#define TAM_HABILIDADE 5
+#define NAVIO 3
+#define AGUA 0
+#define HABILIDADE 5
+
+// Função para calcular o valor absoluto (substituindo abs())
+int valorAbsoluto(int x) {
+    return x < 0 ? -x : x;
+}
+
+// Função para inicializar o tabuleiro com 0 (água)
+void inicializarTabuleiro(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO]) {
+    for (int i = 0; i < TAM_TABULEIRO; i++) {
+        for (int j = 0; j < TAM_TABULEIRO; j++) {
+            tabuleiro[i][j] = AGUA;
+        }
+    }
+}
+
+// Função para posicionar um navio horizontal de tamanho 3
+void posicionarNavioHorizontal(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO], int linha, int coluna) {
+    for (int j = 0; j < 3; j++) {
+        tabuleiro[linha][coluna + j] = NAVIO;
+    }
+}
+
+// Função para posicionar um navio vertical de tamanho 3
+void posicionarNavioVertical(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO], int linha, int coluna) {
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linha + i][coluna] = NAVIO;
+    }
+}
+
+// Função para posicionar uma habilidade em forma de cone
+void aplicarHabilidadeCone(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO], int origem_linha, int origem_coluna) {
+    int centro = TAM_HABILIDADE / 2;
+
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (i >= j - centro && i >= centro - j) {
+                int linha = origem_linha + i - centro;
+                int coluna = origem_coluna + j - centro;
+
+                if (linha >= 0 && linha < TAM_TABULEIRO && coluna >= 0 && coluna < TAM_TABULEIRO && tabuleiro[linha][coluna] == AGUA) {
+                    tabuleiro[linha][coluna] = HABILIDADE;
+                }
+            }
+        }
+    }
+}
+
+// Função para posicionar uma habilidade em forma de cruz
+void aplicarHabilidadeCruz(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO], int origem_linha, int origem_coluna) {
+    int centro = TAM_HABILIDADE / 2;
+
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (i == centro || j == centro) {
+                int linha = origem_linha + i - centro;
+                int coluna = origem_coluna + j - centro;
+
+                if (linha >= 0 && linha < TAM_TABULEIRO && coluna >= 0 && coluna < TAM_TABULEIRO && tabuleiro[linha][coluna] == AGUA) {
+                    tabuleiro[linha][coluna] = HABILIDADE;
+                }
+            }
+        }
+    }
+}
+
+// Função para posicionar uma habilidade em forma de octaedro (losango)
+void aplicarHabilidadeOctaedro(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO], int origem_linha, int origem_coluna) {
+    int centro = TAM_HABILIDADE / 2;
+
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (valorAbsoluto(i - centro) + valorAbsoluto(j - centro) <= centro) {
+                int linha = origem_linha + i - centro;
+                int coluna = origem_coluna + j - centro;
+
+                if (linha >= 0 && linha < TAM_TABULEIRO && coluna >= 0 && coluna < TAM_TABULEIRO && tabuleiro[linha][coluna] == AGUA) {
+                    tabuleiro[linha][coluna] = HABILIDADE;
+                }
+            }
+        }
+    }
+}
+
+// Função para exibir o tabuleiro
+void exibirTabuleiro(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO]) {
+    for (int i = 0; i < TAM_TABULEIRO; i++) {
+        for (int j = 0; j < TAM_TABULEIRO; j++) {
+            if (tabuleiro[i][j] == AGUA)
+                printf("0 ");
+            else if (tabuleiro[i][j] == NAVIO)
+                printf("3 ");
+            else if (tabuleiro[i][j] == HABILIDADE)
+                printf("5 ");
+        }
+        printf("\n");
+    }
+}
+
+// Função principal
+int main() {
+    int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO];
+    inicializarTabuleiro(tabuleiro);
+
+    // Posicionar dois navios
+    posicionarNavioHorizontal(tabuleiro, 2, 2); // Linha 2, coluna 2
+    posicionarNavioVertical(tabuleiro, 5, 6);   // Linha 5, coluna 6
+
+    // Aplicar habilidades
+    aplicarHabilidadeCone(tabuleiro, 1, 5);
+    aplicarHabilidadeCruz(tabuleiro, 7, 3);
+    aplicarHabilidadeOctaedro(tabuleiro, 6, 6);
+
+    // Exibir resultado final
+    printf("Tabuleiro com habilidades aplicadas:\n");
+    exibirTabuleiro(tabuleiro);
+
+    return 0;
+}
