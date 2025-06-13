@@ -1,0 +1,132 @@
+#include <stdio.h>
+
+#define TAMANHO 10
+#define NAVIO 3
+#define AGUA 0
+#define TAMANHO_NAVIO 3
+
+// Inicializa todas as posições do tabuleiro com 0 (água)
+void inicializarTabuleiro(int tabuleiro[TAMANHO][TAMANHO]) {
+    for (int i = 0; i < TAMANHO; i++) {
+        for (int j = 0; j < TAMANHO; j++) {
+            tabuleiro[i][j] = AGUA;
+        }
+    }
+}
+
+// Exibe o tabuleiro formatado
+void exibirTabuleiro(int tabuleiro[TAMANHO][TAMANHO]) {
+    printf("Tabuleiro:\n\n");
+    for (int i = 0; i < TAMANHO; i++) {
+        for (int j = 0; j < TAMANHO; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Verifica se há espaço e sem sobreposição para navio horizontal
+int podeHorizontal(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    if (coluna + TAMANHO_NAVIO > TAMANHO) return 0;
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha][coluna + i] != AGUA) return 0;
+    }
+    return 1;
+}
+
+// Verifica se há espaço e sem sobreposição para navio vertical
+int podeVertical(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    if (linha + TAMANHO_NAVIO > TAMANHO) return 0;
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha + i][coluna] != AGUA) return 0;
+    }
+    return 1;
+}
+
+// Verifica se há espaço e sem sobreposição para navio na diagonal principal (↘)
+int podeDiagonalPrincipal(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    if (linha + TAMANHO_NAVIO > TAMANHO || coluna + TAMANHO_NAVIO > TAMANHO) return 0;
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha + i][coluna + i] != AGUA) return 0;
+    }
+    return 1;
+}
+
+// Verifica se há espaço e sem sobreposição para navio na diagonal secundária (↙)
+int podeDiagonalSecundaria(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    if (linha + TAMANHO_NAVIO > TAMANHO || coluna - TAMANHO_NAVIO + 1 < 0) return 0;
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha + i][coluna - i] != AGUA) return 0;
+    }
+    return 1;
+}
+
+// Posiciona navio horizontal
+void posicionarHorizontal(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha][coluna + i] = NAVIO;
+    }
+}
+
+// Posiciona navio vertical
+void posicionarVertical(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha + i][coluna] = NAVIO;
+    }
+}
+
+// Posiciona navio na diagonal principal (↘)
+void posicionarDiagonalPrincipal(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha + i][coluna + i] = NAVIO;
+    }
+}
+
+// Posiciona navio na diagonal secundária (↙)
+void posicionarDiagonalSecundaria(int tabuleiro[TAMANHO][TAMANHO], int linha, int coluna) {
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha + i][coluna - i] = NAVIO;
+    }
+}
+
+int main() {
+    int tabuleiro[TAMANHO][TAMANHO];
+    inicializarTabuleiro(tabuleiro);
+
+    // Definições fixas (podem ser ajustadas manualmente)
+    int lH = 1, cH = 2; // Horizontal
+    int lV = 4, cV = 0; // Vertical
+    int lD1 = 0, cD1 = 6; // Diagonal principal ↘
+    int lD2 = 6, cD2 = 9; // Diagonal secundária ↙
+
+    // Validação e posicionamento
+    if (podeHorizontal(tabuleiro, lH, cH)) {
+        posicionarHorizontal(tabuleiro, lH, cH);
+    } else {
+        printf("Erro: Navio horizontal inválido.\n");
+    }
+
+    if (podeVertical(tabuleiro, lV, cV)) {
+        posicionarVertical(tabuleiro, lV, cV);
+    } else {
+        printf("Erro: Navio vertical inválido.\n");
+    }
+
+    if (podeDiagonalPrincipal(tabuleiro, lD1, cD1)) {
+        posicionarDiagonalPrincipal(tabuleiro, lD1, cD1);
+    } else {
+        printf("Erro: Navio diagonal principal inválido.\n");
+    }
+
+    if (podeDiagonalSecundaria(tabuleiro, lD2, cD2)) {
+        posicionarDiagonalSecundaria(tabuleiro, lD2, cD2);
+    } else {
+        printf("Erro: Navio diagonal secundária inválido.\n");
+    }
+
+    // Exibir o tabuleiro final
+    printf("\n");
+    exibirTabuleiro(tabuleiro);
+
+    return 0;
+}
